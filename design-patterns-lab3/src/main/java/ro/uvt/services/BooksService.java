@@ -1,34 +1,44 @@
 package ro.uvt.services;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ro.uvt.model.Book;
+import ro.uvt.persistence.BooksRepository;
 
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.List;
+import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class BooksService {
-    private final Map<Long, Book> db = new ConcurrentHashMap<>();
-    private final AtomicLong idGen = new AtomicLong(1);
 
-    public List<Book> getAll(){ return new ArrayList<>(db.values()); }
+    private final BooksRepository repo;
 
-    public Optional<Book> getById(Long id){ return Optional.ofNullable(db.get(id)); }
-
-    public Book create(Book b){
-        long id = idGen.getAndIncrement();
-        b.setId(id);
-        db.put(id, b);
-        return b;
+    public List<Book> getAll() {
+        return repo.findAll();
     }
 
-    public Optional<Book> update(Long id, Book b){
-        if(!db.containsKey(id)) return Optional.empty();
-        b.setId(id);
-        db.put(id, b);
-        return Optional.of(b);
+    public Optional<Book> getById(Long id) {
+        return repo.findById(id);
     }
 
-    public boolean delete(Long id){ return db.remove(id) != null; }
+    public Book create(Book b) {
+        // id'yi DB üretecek
+        return repo.save(b);
+    }
+
+    public Optional<Book> update(Long id, Book b) {
+        return repo.findById(id).map(existing -> {
+            existing.setTitle(b.getTitle());
+            existing.setAuthor(b.getAuthor());
+            existing.setIsbn(b.getIsbn());
+            return repo.save(existing);
+        });
+    }
+
+    public boolean delete(Long id) {
+        if (!repo.existsById(id)) return false;
+        repo.deleteById(id);
+        return true;
+    }
 }

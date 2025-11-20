@@ -2,43 +2,51 @@ package ro.uvt.controllers;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.UriComponentsBuilder;
-import ro.uvt.commands.*;
 import ro.uvt.model.Book;
 import ro.uvt.services.BooksService;
+
+import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/books")
 public class BooksController {
-    private final BooksService service;
-    private final CommandExecutor executor;
 
-    public BooksController(BooksService service, CommandExecutor executor){
-        this.service = service; this.executor = executor;
+    private final BooksService booksService;
+
+    public BooksController(BooksService booksService) {
+        this.booksService = booksService;
     }
 
     @GetMapping
-    public ResponseEntity<?> getAll(){
-        return executor.execute(new GetAllBooksCommand(service));
+    public List<Book> getAll() {
+        return booksService.getAll();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getById(@PathVariable Long id){
-        return executor.execute(new GetBookByIdCommand(service, id));
+    public ResponseEntity<Book> getById(@PathVariable Long id) {
+        return booksService.getById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody Book book, UriComponentsBuilder uri){
-        return executor.execute(new CreateBookCommand(service, book, uri));
+    public ResponseEntity<Book> create(@RequestBody Book book) {
+        Book saved = booksService.create(book);
+        return ResponseEntity.created(URI.create("/books/" + saved.getId()))
+                .body(saved);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Book book){
-        return executor.execute(new UpdateBookCommand(service, id, book));
+    public ResponseEntity<Book> update(@PathVariable Long id, @RequestBody Book book) {
+        return booksService.update(id, book)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id){
-        return executor.execute(new DeleteBookCommand(service, id));
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        return booksService.delete(id) ? ResponseEntity.noContent().build()
+                : ResponseEntity.notFound().build();
     }
 }
