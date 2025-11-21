@@ -1,5 +1,7 @@
 package ro.uvt.services;
 
+import ro.uvt.observer.AllBooksSubject;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ro.uvt.model.Book;
@@ -13,6 +15,7 @@ import java.util.Optional;
 public class BooksService {
 
     private final BooksRepository repo;
+    private final AllBooksSubject allBooksSubject;
 
     public List<Book> getAll() {
         return repo.findAll();
@@ -23,9 +26,12 @@ public class BooksService {
     }
 
     public Book create(Book b) {
-        // id'yi DB üretecek
-        return repo.save(b);
+        Book saved = repo.save(b);
+        // yeni kitap eklendiğinde tüm observer’lara haber ver
+        allBooksSubject.add(saved);
+        return saved;
     }
+
 
     public Optional<Book> update(Long id, Book b) {
         return repo.findById(id).map(existing -> {
