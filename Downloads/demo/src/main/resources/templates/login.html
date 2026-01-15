@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Log In</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            background-color: #f3f6fd; /* Dashboard ile aynı arka plan */
+            font-family: 'Poppins', sans-serif;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-card {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            animation: fadeInUp 0.8s ease; /* Açılış animasyonu */
+        }
+
+        /* Logo Alanı */
+        .logo-icon {
+            font-size: 3rem;
+            color: #6c5ce7;
+            margin-bottom: 20px;
+        }
+        
+        .title { font-weight: 700; color: #2d3436; margin-bottom: 5px; }
+        .subtitle { color: #b2bec3; font-size: 0.9rem; margin-bottom: 30px; }
+
+        /* Form Alanları */
+        .form-control {
+            background-color: #f3f6fd;
+            border: none;
+            padding: 15px;
+            padding-left: 45px; /* İkon için yer */
+            border-radius: 12px;
+            height: 50px;
+        }
+        .form-control:focus {
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2);
+        }
+
+        .input-group { position: relative; margin-bottom: 20px; }
+        
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a4b0be;
+            z-index: 10;
+        }
+
+        /* Buton */
+        .btn-login {
+            background-color: #6c5ce7;
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: 600;
+            margin-top: 10px;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
+        }
+        .btn-login:hover {
+            background-color: #5649c0;
+            transform: translateY(-2px);
+        }
+
+        /* Linkler */
+        .footer-link {
+            display: block;
+            margin-top: 20px;
+            color: #636e72;
+            font-size: 0.9rem;
+            text-decoration: none;
+        }
+        .footer-link a { color: #6c5ce7; font-weight: 600; text-decoration: none; }
+        .footer-link a:hover { text-decoration: underline; }
+
+        /* Hata Mesajı */
+        .alert-error {
+            background-color: #ffebee;
+            color: #c62828;
+            border-radius: 10px;
+            padding: 10px;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+        }
+
+        /* Animasyon Keyframes */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-card">
+        <div class="logo-icon">
+            <i class="fa-solid fa-layer-group"></i>
+        </div>
+        <h3 class="title">Welcome</h3>
+        <p class="subtitle">Log in to continue.</p>
+
+        <div th:if="${error}" class="alert-error">
+            <i class="fa-solid fa-circle-exclamation me-2"></i> User name or password incorrrect!
+        </div>
+
+        <form th:action="@{/login}" method="post">
+            
+            <div class="input-group">
+                <i class="fa-solid fa-user input-icon"></i>
+                <input type="text" name="username" class="form-control" placeholder="User Name" required>
+            </div>
+
+            <div class="input-group">
+                <i class="fa-solid fa-lock input-icon"></i>
+                <input type="password" name="password" class="form-control" placeholder="Password" required>
+            </div>
+
+            <button type="submit" class="btn-login">Log In</button>
+        </form>
+
+        <span class="footer-link">
+            Don't you have any account? <a href="/register">Register now!</a>
+        </span>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { background-color: #f3f6fd; font-family: 'Poppins', sans-serif; color: #2d3436; }
+        .navbar { background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.03); padding: 15px 0; }
+        .navbar-brand { font-weight: 700; color: #6c5ce7 !important; font-size: 1.5rem; }
+        .nav-link { color: #636e72 !important; font-weight: 500; }
+        
+        .summary-card {
+            background: linear-gradient(120deg, #845ec2, #d65db1);
+            border-radius: 20px; color: white; padding: 40px;
+            box-shadow: 0 10px 30px rgba(132, 94, 194, 0.3); margin-bottom: 40px;
+        }
+        .summary-label { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.9; }
+        .summary-value { font-size: 2.5rem; font-weight: 700; }
+
+        .sub-card {
+            background: white; border-radius: 16px; padding: 25px; margin-bottom: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.03); display: flex; align-items: center; justify-content: space-between;
+        }
+        .icon-box {
+            width: 60px; height: 60px; background: #f0f3ff; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center; color: #6c5ce7; font-size: 1.5rem; margin-right: 20px;
+        }
+        .service-title { font-weight: 700; font-size: 1.2rem; margin: 0; }
+        .price-tag { font-weight: 700; font-size: 1.3rem; }
+        
+        .badge-cycle { padding: 5px 12px; border-radius: 8px; font-size: 0.75rem; font-weight: 600; }
+        .bg-weekly { background-color: #e1f5fe; color: #0288d1; }
+        .bg-monthly { background-color: #e8f5e9; color: #2e7d32; }
+        .bg-yearly { background-color: #fff3e0; color: #ef6c00; }
+
+        .btn-add {
+            background-color: #6c5ce7; color: white; border: none; padding: 12px 30px; border-radius: 12px; font-weight: 600;
+        }
+        .btn-delete {
+            color: #ff7675; background: rgba(255, 118, 117, 0.1); width: 40px; height: 40px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg fixed-top">
+  <div class="container">
+    <a class="navbar-brand" href="#"><i class="fa-solid fa-layer-group me-2"></i>SubManager</a>
+    <div class="collapse navbar-collapse">
+      <ul class="navbar-nav me-auto ms-4">
+        <li class="nav-item"><a class="nav-link active" href="/dashboard">Dashboard</a></li>
+        <li class="nav-item"><a class="nav-link active" href="/stats">Analytics</a></li>
+      </ul>
+      <a href="/login" class="btn btn-outline-secondary btn-sm rounded-pill px-4">Log Out</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container" style="margin-top: 100px;">
+    
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">Welcome!</h2>
+            <p class="text-muted">You can manage your subscriptions from here!</p>
+        </div>
+        <button type="button" class="btn btn-add" data-bs-toggle="modal" data-bs-target="#addModal">
+            <i class="fa-solid fa-plus me-2"></i> New Subscriptions
+        </button>
+    </div>
+
+    <div class="summary-card">
+        <div class="row text-center">
+            <div class="col-md-4 border-end border-light border-opacity-25">
+                <div class="summary-label">Weekly</div>
+                <div class="summary-value" th:text="'$' + ${weeklyTotal}">$0.00</div>
+            </div>
+            <div class="col-md-4 border-end border-light border-opacity-25">
+                <div class="summary-label">Monthly</div>
+                <div class="summary-value" th:text="'$' + ${monthlyTotal}">$0.00</div>
+            </div>
+            <div class="col-md-4">
+                <div class="summary-label">Yearly</div>
+                <div class="summary-value" th:text="'$' + ${yearlyTotal}">$0.00</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12" th:each="sub : ${subscriptions}">
+            <div class="sub-card">
+                <div class="d-flex align-items-center">
+                    <div class="icon-box"><i class="fa-solid fa-bolt"></i></div>
+                    <div>
+                        <h5 class="service-title" th:text="${sub.serviceName}">Netflix</h5>
+                        <span class="badge badge-cycle" 
+                              th:classappend="${sub.billingCycle == 'Weekly' ? 'bg-weekly' : (sub.billingCycle == 'Monthly' ? 'bg-monthly' : 'bg-yearly')}"
+                              th:text="${sub.billingCycle}">Monthly</span>
+                    </div>
+                </div>
+
+                <div class="price-tag" th:text="'$' + ${sub.price}">$12.99</div>
+
+                <div class="d-flex align-items-center gap-4">
+                    <div class="text-center">
+                        <div class="fw-bold" th:text="${sub.renewalDate}">01.01.2024</div>
+                        <div class="small text-muted">Update</div>
+                    </div>
+                    
+                    <a th:href="@{/delete/{id}(id=${sub.id})}" class="btn-delete">
+                        <i class="fa-solid fa-trash"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="modal fade" id="addModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <h5 class="modal-title fw-bold">Add New</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form th:action="@{/add}" method="post">
+                    <div class="mb-3">
+                        <label class="form-label text-muted small fw-bold">SERVİCE NAME</label>
+                        <input type="text" name="serviceName" class="form-control bg-light border-0" placeholder="Ex: Netflix" required>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <label class="form-label text-muted small fw-bold">PRICE ($)</label>
+                            <input type="number" step="0.01" name="price" class="form-control bg-light border-0" placeholder="0.00" required>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label text-muted small fw-bold">LOOP</label>
+                            <select name="billingCycle" class="form-select bg-light border-0">
+                                <option value="Monthly">Monthly</option>
+                                <option value="Yearly">Yearly</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label text-muted small fw-bold">DATE</label>
+                        <input type="date" name="renewalDate" class="form-control bg-light border-0" required>
+                    </div>
+                    <button type="submit" class="btn btn-add w-100">SAVE</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

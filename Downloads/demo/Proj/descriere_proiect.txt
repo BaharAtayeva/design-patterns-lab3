@@ -1,0 +1,26 @@
+Nume Proiect: SubManager (Sistem de Gestionare a Abonamentelor)
+
+Descriere Generală:
+Acesta este un proiect individual dezvoltat pentru a ajuta utilizatorii să își gestioneze eficient finanțele personale. Aplicația permite monitorizarea abonamentelor digitale (precum Netflix, Spotify, YouTube Premium) într-un singur loc, oferind o imagine clară asupra cheltuielilor lunare și anuale.
+
+Arhitectură și Tehnologii:
+Proiectul este o aplicație web de tip "Full-Stack" bazată pe arhitectura MVC (Model-View-Controller).
+
+1. Backend:
+   - Limbaj: Java 17
+   - Framework: Spring Boot 3.x
+   - Dependințe: Spring Web, Spring Data JPA
+
+2. Bază de Date (Persistență):
+   - Sistem: MySQL
+   - Configurare: Aplicația folosește un utilizator dedicat ('project_user') pentru securitate și stochează datele permanent (nu in-memory).
+
+3. Frontend:
+   - Motor de șabloane: Thymeleaf
+   - Design: HTML5, CSS (Bootstrap)
+
+Funcționalități Cheie:
+- Înregistrare și Autentificare securizată a utilizatorilor.
+- Operațiuni CRUD (Create, Read, Update, Delete) pentru abonamente.
+- Dashboard interactiv cu calcule automate ale costurilor.
+- Persistența datelor asigurată prin conexiunea la MySQL.
