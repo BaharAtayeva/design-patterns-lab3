@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Entity
 @Data
-@Table(name = "users") // 'user' ismi bazen SQL'de karışır, 'users' yaptık
+@Table(name = "users") 
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

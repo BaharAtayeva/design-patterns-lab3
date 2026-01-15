@@ -18,7 +18,6 @@ public class WebController {
         this.userRepo = userRepo;
     }
 
-    // --- 1. GİRİŞ (LOGIN) ---
     @GetMapping("/login")
     public String loginPage() { return "login"; }
 
@@ -34,7 +33,6 @@ public class WebController {
         }
     }
 
-    // --- 2. KAYIT OL (REGISTER) ---
     @GetMapping("/register")
     public String registerPage() { return "register"; }
 
@@ -51,7 +49,6 @@ public class WebController {
         return "redirect:/login";
     }
 
-    // --- 3. DASHBOARD ---
     @GetMapping("/dashboard")
     public String dashboard(HttpSession session, Model model) {
         if (session.getAttribute("user") == null) return "redirect:/login";
@@ -72,19 +69,17 @@ public class WebController {
         return "dashboard";
     }
 
-    // --- 4. ANALYTICS (İSTATİSTİKLER) - EKLENDİ ✅ ---
+  
     @GetMapping("/stats")
     public String statsPage(HttpSession session, Model model) {
         if (session.getAttribute("user") == null) return "redirect:/login";
 
         List<Subscription> subscriptions = subRepo.findAll();
         
-        // Toplam Aylık
         double monthlySum = calculateMonthlyTotal(subscriptions);
         
-        // En Pahalı Servis
         Subscription mostExpensive = subscriptions.stream()
-                .max(Comparator.comparingDouble(Subscription::getPrice)) // Basitçe fiyata göre
+                .max(Comparator.comparingDouble(Subscription::getPrice)) 
                 .orElse(null);
 
         model.addAttribute("totalSubs", subscriptions.size());
@@ -101,7 +96,6 @@ public class WebController {
         return "stats";
     }
 
-    // --- YARDIMCI METOTLAR ---
     private double calculateMonthlyTotal(List<Subscription> subs) {
         double sum = 0;
         for (Subscription sub : subs) {
@@ -120,7 +114,7 @@ public class WebController {
         return sum;
     }
 
-    // --- ABONELİK İŞLEMLERİ ---
+  
     @PostMapping("/add")
     public String addSubscription(@ModelAttribute Subscription subscription) {
         subscription.setActive(true);

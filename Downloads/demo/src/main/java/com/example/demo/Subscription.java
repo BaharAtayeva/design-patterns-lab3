@@ -14,11 +14,11 @@ public class Subscription {
 
     private String serviceName;
     private double price;
-    private String billingCycle; // Monthly, Yearly vb.
+    private String billingCycle; 
     private String renewalDate;
-    private boolean isActive; // İşte hatayı çözen kısım burası!
+    private boolean isActive;
 
-    // --- GETTER ve SETTER METOTLARI ---
+  
 
     public Long getId() {
         return id;
